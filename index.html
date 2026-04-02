@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Voice Translator Pro</title>
+    <style>
+        :root { --p: #4f46e5; --bg: #f8fafc; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: sans-serif; }
+        body { margin: 0; background: var(--bg); padding: 15px; display: flex; justify-content: center; }
+        .card { width: 100%; max-width: 450px; background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        textarea { width: 100%; height: 120px; border: 2px solid #eee; border-radius: 15px; padding: 15px; font-size: 16px; outline: none; }
+        .langs { display: flex; gap: 10px; margin: 15px 0; align-items: center; }
+        select { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; background: white; font-weight: bold; color: var(--p); }
+        button { width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; color: white; transition: 0.2s; }
+        .btn-mic { background: var(--p); }
+        .btn-mic.active { background: #ef4444; animation: pulse 1s infinite; }
+        #out { margin-top: 20px; padding: 15px; background: #f1f5f9; border-radius: 12px; font-size: 18px; font-weight: 500; min-height: 60px; color: #1e293b; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 style="text-align:center; color:var(--p); margin-top:0;">TRANSLATOR PRO</h2>
+    <textarea id="inp" placeholder="Type or tap Record..."></textarea>
+    <div class="langs">
+        <select id="sl"></select> <span style="font-weight:bold">➔</span> <select id="tl"></select>
+    </div>
+    <button id="mb" class="btn-mic">🎤 Record Voice</button>
+    <button id="tb" style="background:#10b981">Translate Now</button>
+    <div id="out">...</div>
+</div>
+
+<script>
+    const langs = {"en":"English","es":"Spanish","fr":"French","de":"German","ig":"Igbo","yo":"Yoruba","ha":"Hausa","sw":"Swahili","zu":"Zulu"};
+    const sl=document.getElementById('sl'), tl=document.getElementById('tl'), mb=document.getElementById('mb'), tb=document.getElementById('tb'), inp=document.getElementById('inp'), out=document.getElementById('out');
+    
+    Object.entries(langs).forEach(([c,n]) => { 
+        sl.add(new Option(n,c)); 
+        tl.add(new Option(n,c)); 
+    });
+    tl.value = "en";
+
+    async function translate() {
+        const text = inp.value.trim();
+        if (!text) return;
+        out.innerText = "Translating...";
+        try {
+            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${tl.value}&dt=t&q=${encodeURIComponent(text)}`);
+            const data = await res.json();
+            out.innerText = data[0].map(x => x[0]).join("");
+
+            // 📢 THE MAGIC COMMAND FOR MEDIAN ADS
+            window.location.href = "median://admob/interstitial/show";
+
+        } catch (e) { out.innerText = "Check Connection"; }
+    }
+
+    let rec;
+    if ('webkitSpeechRecognition' in window) {
+        rec = new webkitSpeechRecognition();
+        rec.onstart = () => { mb.classList.add('active'); mb.innerText = "Listening..."; };
+        rec.onresult = (e) => { inp.value = e.results[0][0].transcript; translate(); };
+        rec.onend = () => { mb.classList.remove('active'); mb.innerText = "🎤 Record Voice"; };
+    }
+
+    mb.onclick = () => { 
+        try { rec.lang = sl.value; rec.start(); } 
+        catch(e) { alert("Please enable Mic in settings."); }
+    };
+    tb.onclick = translate;
+</script>
+</body>
+</html>
