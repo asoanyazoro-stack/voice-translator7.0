@@ -3,34 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Voice Translator Pro Max</title>
+    <title>Voice Translator Pro</title>
     <style>
         :root { --p: #4f46e5; --s: #10b981; --bg: #f8fafc; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { margin: 0; background: var(--bg); padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
-        .card { width: 100%; max-width: 480px; background: white; border-radius: 30px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.07); height: fit-content; }
-        h2 { text-align: center; color: var(--p); font-size: 1.4rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
-        textarea { width: 100%; height: 140px; border: 2px solid #edf2f7; border-radius: 20px; padding: 18px; font-size: 1.1rem; outline: none; transition: 0.3s; background: #fdfdfd; }
-        textarea:focus { border-color: var(--p); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
-        .langs { display: flex; gap: 12px; margin: 20px 0; align-items: center; justify-content: space-between; }
-        select { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; font-weight: 600; color: #475569; font-size: 0.95rem; cursor: pointer; }
-        .btn { width: 100%; border: none; padding: 18px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer; color: white; margin-bottom: 12px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .btn-mic { background: var(--p); box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25); }
+        body { margin: 0; background: var(--bg); padding: 10px; display: flex; justify-content: center; min-height: 100vh; align-items: flex-start; }
+        
+        .card { 
+            width: 100%; 
+            max-width: 400px; 
+            background: white; 
+            border-radius: 25px; 
+            padding: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            margin-top: 10px;
+        }
+
+        h2 { text-align: center; color: var(--p); font-size: 1.2rem; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
+        
+        textarea { 
+            width: 100%; 
+            height: 130px; 
+            border: 2px solid #f1f5f9; 
+            border-radius: 15px; 
+            padding: 15px; 
+            font-size: 1rem; 
+            outline: none; 
+            resize: none;
+            background: #fdfdfd;
+        }
+
+        /* FIXED LANGUAGE GRID */
+        .langs { 
+            display: grid; 
+            grid-template-columns: 1fr 30px 1fr; 
+            gap: 8px; 
+            margin: 20px 0; 
+            align-items: center; 
+        }
+
+        select { 
+            width: 100%; 
+            padding: 12px 5px; 
+            border-radius: 10px; 
+            border: 1px solid #e2e8f0; 
+            background: #fff; 
+            font-weight: 600; 
+            color: #475569; 
+            font-size: 0.85rem; 
+            cursor: pointer;
+            text-overflow: ellipsis;
+        }
+
+        .btn { 
+            width: 100%; 
+            border: none; 
+            padding: 16px; 
+            border-radius: 15px; 
+            font-weight: 800; 
+            font-size: 1rem; 
+            cursor: pointer; 
+            color: white; 
+            margin-bottom: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+        }
+
+        .btn-mic { background: var(--p); }
         .btn-mic.active { background: #ef4444; animation: pulse 1.2s infinite; }
-        .btn-tr { background: var(--s); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2); }
-        #out { margin-top: 20px; padding: 20px; background: #f1f5f9; border-radius: 20px; font-size: 1.2rem; font-weight: 500; min-height: 70px; color: #0f172a; border-left: 5px solid var(--s); }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.03); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+        .btn-tr { background: var(--s); }
+
+        #out { 
+            margin-top: 15px; 
+            padding: 15px; 
+            background: #f8fafc; 
+            border-radius: 15px; 
+            font-size: 1.1rem; 
+            min-height: 60px; 
+            color: #1e293b; 
+            border-left: 4px solid var(--s);
+            word-wrap: break-word;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Voice Translator Pro</h2>
+    <h2>VOICE TRANSLATOR</h2>
     <textarea id="inp" placeholder="Type or tap record..."></textarea>
     
     <div class="langs">
         <select id="sl"></select>
-        <span style="font-size: 1.5rem; color: #cbd5e1;">⇄</span>
+        <span style="text-align:center; color:#cbd5e1; font-weight:bold;">⇄</span>
         <select id="tl"></select>
     </div>
 
@@ -41,20 +109,16 @@
 </div>
 
 <script>
-    // FULL LIST OF 100+ LANGUAGES
-    const allLangs = {"af":"Afrikaans","sq":"Albanian","am":"Amharic","ar":"Arabic","hy":"Armenian","az":"Azerbaijani","eu":"Basque","be":"Belarusian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","ceb":"Cebuano","ny":"Chichewa","zh-CN":"Chinese (Simplified)","zh-TW":"Chinese (Traditional)","co":"Corsican","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","eo":"Esperanto","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","fy":"Frisian","gl":"Galician","ka":"Georgian","de":"German","el":"Greek","gu":"Gujarati","ht":"Haitian Creole","ha":"Hausa","haw":"Hawaiian","iw":"Hebrew","hi":"Hindi","hmn":"Hmong","hu":"Hungarian","is":"Icelandic","ig":"Igbo","id":"Indonesian","ga":"Irish","it":"Italian","ja":"Japanese","jw":"Javanese","kn":"Kannada","kk":"Kazakh","km":"Khmer","ko":"Korean","ku":"Kurdish (Kurmanji)","ky":"Kyrgyz","lo":"Lao","la":"Latin","lv":"Latvian","lt":"Lithuanian","lb":"Luxembourgish","mk":"Macedonian","mg":"Malagasy","ms":"Malay","ml":"Malayalam","mt":"Maltese","mi":"Maori","mr":"Marathi","mn":"Mongolian","my":"Myanmar (Burmese)","ne":"Nepali","no":"Norwegian","ps":"Pashto","fa":"Persian","pl":"Polish","pt":"Portuguese","pa":"Punjabi","ro":"Romanian","ru":"Russian","sm":"Samoan","gd":"Scots Gaelic","sr":"Serbian","st":"Sesotho","sn":"Shona","sd":"Sindhi","si":"Sinhala","sk":"Slovak","sl":"Slovenian","so":"Somali","es":"Spanish","su":"Sundanese","sw":"Swahili","sv":"Swedish","tg":"Tajik","ta":"Tamil","te":"Telugu","th":"Thai","tr":"Turkish","uk":"Ukrainian","ur":"Urdu","uz":"Uzbek","vi":"Vietnamese","cy":"Welsh","xh":"Xhosa","yi":"Yiddish","yo":"Yoruba","zu":"Zulu"};
+    const allLangs = {"af":"Afrikaans","sq":"Albanian","am":"Amharic","ar":"Arabic","hy":"Armenian","az":"Azerbaijani","eu":"Basque","be":"Belarusian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","ceb":"Cebuano","ny":"Chichewa","zh-CN":"Chinese","zh-TW":"Chinese (Trad)","co":"Corsican","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","eo":"Esperanto","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","fy":"Frisian","gl":"Galician","ka":"Georgian","de":"German","el":"Greek","gu":"Gujarati","ht":"Haitian","ha":"Hausa","haw":"Hawaiian","iw":"Hebrew","hi":"Hindi","hmn":"Hmong","hu":"Hungarian","is":"Icelandic","ig":"Igbo","id":"Indonesian","ga":"Irish","it":"Italian","ja":"Japanese","jw":"Javanese","kn":"Kannada","kk":"Kazakh","km":"Khmer","ko":"Korean","ku":"Kurdish","ky":"Kyrgyz","lo":"Lao","la":"Latin","lv":"Latvian","lt":"Lithuanian","lb":"Luxembourgish","mk":"Macedonian","mg":"Malagasy","ms":"Malay","ml":"Malayalam","mt":"Maltese","mi":"Maori","mr":"Marathi","mn":"Mongolian","my":"Burmese","ne":"Nepali","no":"Norwegian","ps":"Pashto","fa":"Persian","pl":"Polish","pt":"Portuguese","pa":"Punjabi","ro":"Romanian","ru":"Russian","sm":"Samoan","gd":"Scots Gaelic","sr":"Serbian","st":"Sesotho","sn":"Shona","sd":"Sindhi","si":"Sinhala","sk":"Slovak","sl":"Slovenian","so":"Somali","es":"Spanish","su":"Sundanese","sw":"Swahili","sv":"Swedish","tg":"Tajik","ta":"Tamil","te":"Telugu","th":"Thai","tr":"Turkish","uk":"Ukrainian","ur":"Urdu","uz":"Uzbek","vi":"Vietnamese","cy":"Welsh","xh":"Xhosa","yi":"Yiddish","yo":"Yoruba","zu":"Zulu"};
 
     const sl=document.getElementById('sl'), tl=document.getElementById('tl'), mb=document.getElementById('mb'), tb=document.getElementById('tb'), inp=document.getElementById('inp'), out=document.getElementById('out');
     
-    // Add "Detect Language" option to source
     sl.add(new Option("Detect Language", "auto"));
-    
     Object.entries(allLangs).forEach(([code, name]) => { 
         sl.add(new Option(name, code)); 
         tl.add(new Option(name, code)); 
     });
 
-    // Default settings
     sl.value = "auto";
     tl.value = "en";
 
@@ -67,28 +131,24 @@
             const data = await res.json();
             out.innerText = data[0].map(x => x[0]).join("");
 
-            // ADS TRIGGER (MEDIAN)
+            // MEDIAN AD TRIGGER
             window.location.href = "median://admob/interstitial/show";
-
-        } catch (e) { out.innerText = "Error: Check Data"; }
+        } catch (e) { out.innerText = "Error: Check Connection"; }
     }
 
     let rec;
     if ('webkitSpeechRecognition' in window) {
         rec = new webkitSpeechRecognition();
-        rec.continuous = false;
-        rec.interimResults = false;
         rec.onstart = () => { mb.classList.add('active'); mb.innerText = "Listening..."; };
         rec.onresult = (e) => { inp.value = e.results[0][0].transcript; translate(); };
         rec.onend = () => { mb.classList.remove('active'); mb.innerText = "🎤 Record Voice"; };
-        rec.onerror = (e) => { console.error(e.error); mb.classList.remove('active'); mb.innerText = "🎤 Record Voice"; };
     }
 
     mb.onclick = () => { 
         try { 
             rec.lang = sl.value === "auto" ? "en-US" : sl.value; 
             rec.start(); 
-        } catch(e) { alert("Enable Microphone in App Settings"); }
+        } catch(e) { alert("Mic not ready. Check app permissions."); }
     };
     tb.onclick = translate;
 </script>
