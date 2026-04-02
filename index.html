@@ -1,156 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Voice Translator Pro</title>
-    <style>
-        :root { --p: #4f46e5; --s: #10b981; --bg: #f8fafc; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { margin: 0; background: var(--bg); padding: 10px; display: flex; justify-content: center; min-height: 100vh; align-items: flex-start; }
-        
-        .card { 
-            width: 100%; 
-            max-width: 400px; 
-            background: white; 
-            border-radius: 25px; 
-            padding: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-            margin-top: 10px;
-        }
-
-        h2 { text-align: center; color: var(--p); font-size: 1.2rem; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px; }
-        
-        textarea { 
-            width: 100%; 
-            height: 130px; 
-            border: 2px solid #f1f5f9; 
-            border-radius: 15px; 
-            padding: 15px; 
-            font-size: 1rem; 
-            outline: none; 
-            resize: none;
-            background: #fdfdfd;
-        }
-
-        /* FIXED LANGUAGE GRID */
-        .langs { 
-            display: grid; 
-            grid-template-columns: 1fr 30px 1fr; 
-            gap: 8px; 
-            margin: 20px 0; 
-            align-items: center; 
-        }
-
-        select { 
-            width: 100%; 
-            padding: 12px 5px; 
-            border-radius: 10px; 
-            border: 1px solid #e2e8f0; 
-            background: #fff; 
-            font-weight: 600; 
-            color: #475569; 
-            font-size: 0.85rem; 
-            cursor: pointer;
-            text-overflow: ellipsis;
-        }
-
-        .btn { 
-            width: 100%; 
-            border: none; 
-            padding: 16px; 
-            border-radius: 15px; 
-            font-weight: 800; 
-            font-size: 1rem; 
-            cursor: pointer; 
-            color: white; 
-            margin-bottom: 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-        }
-
-        .btn-mic { background: var(--p); }
-        .btn-mic.active { background: #ef4444; animation: pulse 1.2s infinite; }
-        .btn-tr { background: var(--s); }
-
-        #out { 
-            margin-top: 15px; 
-            padding: 15px; 
-            background: #f8fafc; 
-            border-radius: 15px; 
-            font-size: 1.1rem; 
-            min-height: 60px; 
-            color: #1e293b; 
-            border-left: 4px solid var(--s);
-            word-wrap: break-word;
-        }
-
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Voice Translator Pro</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding: 15px 15px 80px 15px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 500px; background: var(--card); border-radius: 28px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid var(--border); }
+    h2 { margin: 0 0 15px; font-size: 1.4rem; text-align: center; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+    textarea { width: 100%; min-height: 140px; border: 2px solid #e2e8f0; border-radius: 18px; padding: 15px; font-size: 1.1rem; resize: none; outline: none; background: #fdfdfd; transition: 0.3s; }
+    textarea:focus { border-color: var(--primary); background: #fff; }
+    .lang-row { display: grid; grid-template-columns: 1fr 30px 1fr; align-items: center; gap: 10px; margin: 15px 0; }
+    select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: white; font-size: 0.9rem; font-weight: bold; color: #475569; }
+    .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
+    button { flex: 1; border: none; padding: 18px; border-radius: 15px; font-weight: 700; font-size: 1rem; cursor: pointer; color: white; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .btn-mic { background: var(--primary); }
+    .btn-mic.recording { background: #ef4444; animation: pulse 1.5s infinite; }
+    .btn-translate { background: #10b981; }
+    .status { text-align: center; font-size: 0.85rem; color: #64748b; margin-bottom: 15px; min-height: 1.2rem; font-weight: bold; }
+    .result-panel { background: #f1f5f9; border-radius: 18px; padding: 15px; border: 1px dashed #cbd5e1; }
+    .label { font-size: 0.7rem; text-transform: uppercase; color: #64748b; margin-bottom: 8px; font-weight: bold; }
+    #output { font-size: 1.1rem; font-weight: 500; color: var(--text); min-height: 1.5rem; word-wrap: break-word; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); opacity: 0.8; } 100% { transform: scale(1); } }
+  </style>
 </head>
 <body>
+<div class="container">
+  <h2>Voice Translator Pro</h2>
+  <textarea id="inputText" placeholder="Type text here or tap Record..."></textarea>
+  
+  <div class="lang-row">
+    <select id="srcLang"></select>
+    <span style="color: #94a3b8; font-weight: bold; text-align: center;">➔</span>
+    <select id="trgLang"></select>
+  </div>
 
-<div class="card">
-    <h2>VOICE TRANSLATOR</h2>
-    <textarea id="inp" placeholder="Type or tap record..."></textarea>
-    
-    <div class="langs">
-        <select id="sl"></select>
-        <span style="text-align:center; color:#cbd5e1; font-weight:bold;">⇄</span>
-        <select id="tl"></select>
-    </div>
+  <div class="status" id="statusMsg">Ready</div>
+  
+  <div class="btn-group">
+    <button id="micBtn" class="btn-mic">🎤 Record Voice</button>
+    <button id="transBtn" class="btn-translate">Translate</button>
+  </div>
 
-    <button id="mb" class="btn btn-mic">🎤 Record Voice</button>
-    <button id="tb" class="btn btn-tr">Translate Now</button>
-
-    <div id="out">...</div>
+  <div class="result-panel">
+    <div class="label">Translation Result</div>
+    <div id="output">...</div>
+  </div>
 </div>
 
 <script>
-    const allLangs = {"af":"Afrikaans","sq":"Albanian","am":"Amharic","ar":"Arabic","hy":"Armenian","az":"Azerbaijani","eu":"Basque","be":"Belarusian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","ceb":"Cebuano","ny":"Chichewa","zh-CN":"Chinese","zh-TW":"Chinese (Trad)","co":"Corsican","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","eo":"Esperanto","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","fy":"Frisian","gl":"Galician","ka":"Georgian","de":"German","el":"Greek","gu":"Gujarati","ht":"Haitian","ha":"Hausa","haw":"Hawaiian","iw":"Hebrew","hi":"Hindi","hmn":"Hmong","hu":"Hungarian","is":"Icelandic","ig":"Igbo","id":"Indonesian","ga":"Irish","it":"Italian","ja":"Japanese","jw":"Javanese","kn":"Kannada","kk":"Kazakh","km":"Khmer","ko":"Korean","ku":"Kurdish","ky":"Kyrgyz","lo":"Lao","la":"Latin","lv":"Latvian","lt":"Lithuanian","lb":"Luxembourgish","mk":"Macedonian","mg":"Malagasy","ms":"Malay","ml":"Malayalam","mt":"Maltese","mi":"Maori","mr":"Marathi","mn":"Mongolian","my":"Burmese","ne":"Nepali","no":"Norwegian","ps":"Pashto","fa":"Persian","pl":"Polish","pt":"Portuguese","pa":"Punjabi","ro":"Romanian","ru":"Russian","sm":"Samoan","gd":"Scots Gaelic","sr":"Serbian","st":"Sesotho","sn":"Shona","sd":"Sindhi","si":"Sinhala","sk":"Slovak","sl":"Slovenian","so":"Somali","es":"Spanish","su":"Sundanese","sw":"Swahili","sv":"Swedish","tg":"Tajik","ta":"Tamil","te":"Telugu","th":"Thai","tr":"Turkish","uk":"Ukrainian","ur":"Urdu","uz":"Uzbek","vi":"Vietnamese","cy":"Welsh","xh":"Xhosa","yi":"Yiddish","yo":"Yoruba","zu":"Zulu"};
+  const langs = {"auto":"Detect Language","af":"Afrikaans","sq":"Albanian","ar":"Arabic","hy":"Armenian","az":"Azerbaijani","eu":"Basque","be":"Belarusian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","ceb":"Cebuano","ny":"Chichewa","zh-CN":"Chinese","co":"Corsican","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","eo":"Esperanto","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","fy":"Frisian","gl":"Galician","ka":"Georgian","de":"German","el":"Greek","gu":"Gujarati","ht":"Haitian","ha":"Hausa","haw":"Hawaiian","iw":"Hebrew","hi":"Hindi","hmn":"Hmong","hu":"Hungarian","is":"Icelandic","ig":"Igbo","id":"Indonesian","ga":"Irish","it":"Italian","ja":"Japanese","jw":"Javanese","kn":"Kannada","kk":"Kazakh","km":"Khmer","ko":"Korean","ku":"Kurdish","ky":"Kyrgyz","lo":"Lao","la":"Latin","lv":"Latvian","lt":"Lithuanian","lb":"Luxembourgish","mk":"Macedonian","mg":"Malagasy","ms":"Malay","ml":"Malayalam","mt":"Maltese","mi":"Maori","mr":"Marathi","mn":"Mongolian","my":"Myanmar","ne":"Nepali","no":"Norwegian","ps":"Pashto","fa":"Persian","pl":"Polish","pt":"Portuguese","pa":"Punjabi","ro":"Romanian","ru":"Russian","sm":"Samoan","gd":"Scots Gaelic","sr":"Serbian","st":"Sesotho","sn":"Shona","sd":"Sindhi","si":"Sinhala","sk":"Slovak","sl":"Slovenian","so":"Somali","es":"Spanish","su":"Sundanese","sw":"Swahili","sv":"Swedish","tg":"Tajik","ta":"Tamil","te":"Telugu","th":"Thai","tr":"Turkish","uk":"Ukrainian","ur":"Urdu","uz":"Uzbek","vi":"Vietnamese","cy":"Welsh","xh":"Xhosa","yi":"Yidish","yo":"Yoruba","zu":"Zulu"};
 
-    const sl=document.getElementById('sl'), tl=document.getElementById('tl'), mb=document.getElementById('mb'), tb=document.getElementById('tb'), inp=document.getElementById('inp'), out=document.getElementById('out');
+  const srcSelect = document.getElementById('srcLang');
+  const trgSelect = document.getElementById('trgLang');
+  const micBtn = document.getElementById('micBtn');
+  const transBtn = document.getElementById('transBtn');
+  const inputArea = document.getElementById('inputText');
+  const outputDiv = document.getElementById('output');
+  const statusMsg = document.getElementById('statusMsg');
+
+  // Fill dropdowns
+  Object.entries(langs).forEach(([code, name]) => {
+    srcSelect.add(new Option(name, code));
+    if(code !== "auto") trgSelect.add(new Option(name, code));
+  });
+  trgSelect.value = "en";
+
+  // --- SPEECH RECOGNITION ---
+  let recognition;
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new Speech();
+    recognition.continuous = false;
     
-    sl.add(new Option("Detect Language", "auto"));
-    Object.entries(allLangs).forEach(([code, name]) => { 
-        sl.add(new Option(name, code)); 
-        tl.add(new Option(name, code)); 
-    });
-
-    sl.value = "auto";
-    tl.value = "en";
-
-    async function translate() {
-        const text = inp.value.trim();
-        if (!text) return;
-        out.innerText = "Translating...";
-        try {
-            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl.value}&tl=${tl.value}&dt=t&q=${encodeURIComponent(text)}`);
-            const data = await res.json();
-            out.innerText = data[0].map(x => x[0]).join("");
-
-            // MEDIAN AD TRIGGER
-            window.location.href = "median://admob/interstitial/show";
-        } catch (e) { out.innerText = "Error: Check Connection"; }
-    }
-
-    let rec;
-    if ('webkitSpeechRecognition' in window) {
-        rec = new webkitSpeechRecognition();
-        rec.onstart = () => { mb.classList.add('active'); mb.innerText = "Listening..."; };
-        rec.onresult = (e) => { inp.value = e.results[0][0].transcript; translate(); };
-        rec.onend = () => { mb.classList.remove('active'); mb.innerText = "🎤 Record Voice"; };
-    }
-
-    mb.onclick = () => { 
-        try { 
-            rec.lang = sl.value === "auto" ? "en-US" : sl.value; 
-            rec.start(); 
-        } catch(e) { alert("Mic not ready. Check app permissions."); }
+    recognition.onstart = () => { 
+      micBtn.classList.add('recording'); 
+      micBtn.innerText = "Listening..."; 
+      statusMsg.innerText = "Listening..."; 
     };
-    tb.onclick = translate;
+
+    recognition.onresult = (event) => { 
+      inputArea.value = event.results[0][0].transcript; 
+      handleTranslation(); 
+    };
+
+    recognition.onerror = (e) => { 
+      statusMsg.innerText = "Mic Error: " + e.error; 
+      stopMic(); 
+    };
+
+    recognition.onend = () => stopMic();
+  }
+
+  function stopMic() { 
+    micBtn.classList.remove('recording'); 
+    micBtn.innerText = "🎤 Record Voice"; 
+  }
+
+  micBtn.onclick = () => {
+    if (micBtn.classList.contains('recording')) { 
+      recognition.stop(); 
+    } else { 
+      recognition.lang = srcSelect.value === "auto" ? "en-US" : srcSelect.value; 
+      try {
+        recognition.start(); 
+      } catch(e) {
+        alert("Please enable Microphone permissions in App Settings.");
+      }
+    }
+  };
+
+  // --- TRANSLATION + AD TRIGGER ---
+  async function handleTranslation() {
+    const text = inputArea.value.trim();
+    if (!text) { statusMsg.innerText = "Enter text first!"; return; }
+    
+    statusMsg.innerText = "Translating...";
+    
+    try {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${srcSelect.value}&tl=${trgSelect.value}&dt=t&q=${encodeURIComponent(text)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      
+      outputDiv.innerText = data[0].map(i => i[0]).join("");
+      statusMsg.innerText = "Success!";
+
+      // TRIGGER INTERSTITIAL IF ENABLED IN MEDIAN
+      if (navigator.userAgent.includes('Median')) {
+          window.location.href = "median://admob/interstitial/show";
+      }
+
+    } catch (e) { 
+      statusMsg.innerText = "Error: Check Data/Internet"; 
+    }
+  }
+
+  transBtn.onclick = handleTranslation;
 </script>
 </body>
 </html>
