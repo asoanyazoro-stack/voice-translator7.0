@@ -1,149 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Voice Translator Pro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>All-In-One Video Downloader</title>
+  
   <style>
     :root {
-      --primary: #2563eb;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #0f172a;
-      --border: #e2e8f0;
+      --primary: #8b5cf6;
+      --secondary: #ec4899;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
     }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { margin: 0; background: var(--bg); color: var(--text); padding: 15px 15px 80px 15px; display: flex; justify-content: center; }
-    .container { width: 100%; max-width: 500px; background: var(--card); border-radius: 28px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid var(--border); }
-    h2 { margin: 0 0 15px; font-size: 1.4rem; text-align: center; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
-    textarea { width: 100%; min-height: 140px; border: 2px solid #e2e8f0; border-radius: 18px; padding: 15px; font-size: 1.1rem; resize: none; outline: none; background: #fdfdfd; transition: 0.3s; }
-    textarea:focus { border-color: var(--primary); background: #fff; }
-    .lang-row { display: grid; grid-template-columns: 1fr 30px 1fr; align-items: center; gap: 10px; margin: 15px 0; }
-    select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: white; font-size: 0.9rem; font-weight: bold; color: #475569; }
-    .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
-    button { flex: 1; border: none; padding: 18px; border-radius: 15px; font-weight: 700; font-size: 1rem; cursor: pointer; color: white; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .btn-mic { background: var(--primary); }
-    .btn-mic.recording { background: #ef4444; animation: pulse 1.5s infinite; }
-    .btn-translate { background: #10b981; }
-    .status { text-align: center; font-size: 0.85rem; color: #64748b; margin-bottom: 15px; min-height: 1.2rem; font-weight: bold; }
-    .result-panel { background: #f1f5f9; border-radius: 18px; padding: 15px; border: 1px dashed #cbd5e1; }
-    .label { font-size: 0.7rem; text-transform: uppercase; color: #64748b; margin-bottom: 8px; font-weight: bold; }
-    #output { font-size: 1.1rem; font-weight: 500; color: var(--text); min-height: 1.5rem; word-wrap: break-word; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); opacity: 0.8; } 100% { transform: scale(1); } }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding: 15px; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
+    
+    .container { 
+      width: 100%; 
+      max-width: 450px; 
+      background: var(--card); 
+      border-radius: 30px; 
+      padding: 30px; 
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    h2 { text-align: center; font-size: 1.6rem; font-weight: 800; background: linear-gradient(to right, #c084fc, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+    p.subtitle { text-align: center; color: #94a3b8; font-size: 0.85rem; margin-top: 0; margin-bottom: 25px; }
+    
+    .input-wrapper {
+      background: #334155;
+      border-radius: 16px;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      border: 2px solid transparent;
+      transition: 0.3s;
+    }
+    .input-wrapper:focus-within { border-color: var(--primary); }
+
+    input { 
+      flex: 1; 
+      background: transparent; 
+      border: none; 
+      padding: 15px; 
+      font-size: 1rem; 
+      color: white; 
+      outline: none; 
+    }
+    input::placeholder { color: #64748b; }
+
+    .btn-download { 
+      width: 100%; 
+      border: none; 
+      padding: 16px; 
+      border-radius: 16px; 
+      font-weight: 800; 
+      font-size: 1.1rem; 
+      cursor: pointer; 
+      color: white; 
+      margin-top: 15px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+      transition: 0.3s;
+    }
+    .btn-download:active { transform: scale(0.98); }
+
+    .status { 
+      margin-top: 20px; 
+      padding: 15px; 
+      background: #334155; 
+      border-radius: 16px; 
+      font-size: 0.95rem; 
+      min-height: 50px; 
+      color: #cbd5e1; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .supported-platforms {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 25px;
+      color: #64748b;
+      font-size: 0.8rem;
+    }
+    .platform { background: #334155; padding: 5px 10px; border-radius: 8px; color: #cbd5e1; font-weight: bold; }
   </style>
 </head>
 <body>
+
 <div class="container">
-  <h2>Voice Translator Pro</h2>
-  <textarea id="inputText" placeholder="Type text here or tap Record..."></textarea>
+  <h2>V-DOWN DOWNLOADER</h2>
+  <p class="subtitle">Download social media videos instantly!</p>
   
-  <div class="lang-row">
-    <select id="srcLang"></select>
-    <span style="color: #94a3b8; font-weight: bold; text-align: center;">➔</span>
-    <select id="trgLang"></select>
+  <div class="input-wrapper">
+    <input type="text" id="videoUrl" placeholder="Paste video link here...">
   </div>
 
-  <div class="status" id="statusMsg">Ready</div>
-  
-  <div class="btn-group">
-    <button id="micBtn" class="btn-mic">🎤 Record Voice</button>
-    <button id="transBtn" class="btn-translate">Translate</button>
-  </div>
+  <button id="downloadBtn" class="btn-download">Download Video</button>
 
-  <div class="result-panel">
-    <div class="label">Translation Result</div>
-    <div id="output">...</div>
+  <div class="status" id="statusMsg">Paste a link above to begin.</div>
+
+  <div class="supported-platforms">
+    <span class="platform">TikTok</span>
+    <span class="platform">Instagram</span>
+    <span class="platform">Facebook</span>
   </div>
 </div>
 
 <script>
-  const langs = {"auto":"Detect Language","af":"Afrikaans","sq":"Albanian","ar":"Arabic","hy":"Armenian","az":"Azerbaijani","eu":"Basque","be":"Belarusian","bn":"Bengali","bs":"Bosnian","bg":"Bulgarian","ca":"Catalan","ceb":"Cebuano","ny":"Chichewa","zh-CN":"Chinese","co":"Corsican","hr":"Croatian","cs":"Czech","da":"Danish","nl":"Dutch","en":"English","eo":"Esperanto","et":"Estonian","tl":"Filipino","fi":"Finnish","fr":"French","fy":"Frisian","gl":"Galician","ka":"Georgian","de":"German","el":"Greek","gu":"Gujarati","ht":"Haitian","ha":"Hausa","haw":"Hawaiian","iw":"Hebrew","hi":"Hindi","hmn":"Hmong","hu":"Hungarian","is":"Icelandic","ig":"Igbo","id":"Indonesian","ga":"Irish","it":"Italian","ja":"Japanese","jw":"Javanese","kn":"Kannada","kk":"Kazakh","km":"Khmer","ko":"Korean","ku":"Kurdish","ky":"Kyrgyz","lo":"Lao","la":"Latin","lv":"Latvian","lt":"Lithuanian","lb":"Luxembourgish","mk":"Macedonian","mg":"Malagasy","ms":"Malay","ml":"Malayalam","mt":"Maltese","mi":"Maori","mr":"Marathi","mn":"Mongolian","my":"Myanmar","ne":"Nepali","no":"Norwegian","ps":"Pashto","fa":"Persian","pl":"Polish","pt":"Portuguese","pa":"Punjabi","ro":"Romanian","ru":"Russian","sm":"Samoan","gd":"Scots Gaelic","sr":"Serbian","st":"Sesotho","sn":"Shona","sd":"Sindhi","si":"Sinhala","sk":"Slovak","sl":"Slovenian","so":"Somali","es":"Spanish","su":"Sundanese","sw":"Swahili","sv":"Swedish","tg":"Tajik","ta":"Tamil","te":"Telugu","th":"Thai","tr":"Turkish","uk":"Ukrainian","ur":"Urdu","uz":"Uzbek","vi":"Vietnamese","cy":"Welsh","xh":"Xhosa","yi":"Yidish","yo":"Yoruba","zu":"Zulu"};
-
-  const srcSelect = document.getElementById('srcLang');
-  const trgSelect = document.getElementById('trgLang');
-  const micBtn = document.getElementById('micBtn');
-  const transBtn = document.getElementById('transBtn');
-  const inputArea = document.getElementById('inputText');
-  const outputDiv = document.getElementById('output');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const videoUrl = document.getElementById('videoUrl');
   const statusMsg = document.getElementById('statusMsg');
 
-  // Fill dropdowns
-  Object.entries(langs).forEach(([code, name]) => {
-    srcSelect.add(new Option(name, code));
-    if(code !== "auto") trgSelect.add(new Option(name, code));
-  });
-  trgSelect.value = "en";
+  // 💰 ADSTERRA CONFIGURATION
+  // Put your Adsterra Direct Link inside the quotes below!
+  const ADSTERRA_DIRECT_LINK = "https://your_direct_link_here.com";
 
-  // --- SPEECH RECOGNITION ---
-  let recognition;
-  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-    recognition = new Speech();
-    recognition.continuous = false;
+  async function handleDownload() {
+    const url = videoUrl.value.trim();
     
-    recognition.onstart = () => { 
-      micBtn.classList.add('recording'); 
-      micBtn.innerText = "Listening..."; 
-      statusMsg.innerText = "Listening..."; 
-    };
-
-    recognition.onresult = (event) => { 
-      inputArea.value = event.results[0][0].transcript; 
-      handleTranslation(); 
-    };
-
-    recognition.onerror = (e) => { 
-      statusMsg.innerText = "Mic Error: " + e.error; 
-      stopMic(); 
-    };
-
-    recognition.onend = () => stopMic();
-  }
-
-  function stopMic() { 
-    micBtn.classList.remove('recording'); 
-    micBtn.innerText = "🎤 Record Voice"; 
-  }
-
-  micBtn.onclick = () => {
-    if (micBtn.classList.contains('recording')) { 
-      recognition.stop(); 
-    } else { 
-      recognition.lang = srcSelect.value === "auto" ? "en-US" : srcSelect.value; 
-      try {
-        recognition.start(); 
-      } catch(e) {
-        alert("Please enable Microphone permissions in App Settings.");
-      }
+    if (!url) {
+      statusMsg.innerText = "⚠️ Please paste a valid link first!";
+      return;
     }
-  };
 
-  // --- TRANSLATION + AD TRIGGER ---
-  async function handleTranslation() {
-    const text = inputArea.value.trim();
-    if (!text) { statusMsg.innerText = "Enter text first!"; return; }
-    
-    statusMsg.innerText = "Translating...";
-    
+    statusMsg.innerText = "⏳ Processing video... Please wait.";
+
+    // 🚀 STEP 1: OPEN THE ADSTERRA DIRECT LINK (MONETIZATION)
+    // This will force the ad to open in a new tab immediately!
+    window.open(ADSTERRA_DIRECT_LINK, '_blank');
+
+    // 🛠️ STEP 2: FETCH THE VIDEO USING A FREE API
+    // We are using a public free API to grab TikTok videos as an example
     try {
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${srcSelect.value}&tl=${trgSelect.value}&dt=t&q=${encodeURIComponent(text)}`;
-      const res = await fetch(url);
-      const data = await res.json();
+      // Free public TikTok API endpoint
+      const apiUrl = `https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(url)}`;
       
-      outputDiv.innerText = data[0].map(i => i[0]).join("");
-      statusMsg.innerText = "Success!";
+      const response = await fetch(apiUrl);
+      const data = await response.json();
 
-      // TRIGGER INTERSTITIAL IF ENABLED IN MEDIAN
-      if (navigator.userAgent.includes('Median')) {
-          window.location.href = "median://admob/interstitial/show";
+      if (data && data.video && data.video.noWatermark) {
+        statusMsg.innerHTML = `<span style="color:#10b981;">✔️ Video Ready!</span><br><br><a href="${data.video.noWatermark}" target="_blank" style="color: #60a5fa; font-weight:bold;">👉 Click Here to Save File 👈</a>`;
+      } else {
+        statusMsg.innerText = "⚠️ Could not grab video. Is the link correct?";
       }
 
-    } catch (e) { 
-      statusMsg.innerText = "Error: Check Data/Internet"; 
+    } catch (error) {
+      statusMsg.innerText = "❌ Network error. Try again later.";
+      console.error(error);
     }
   }
 
-  transBtn.onclick = handleTranslation;
+  downloadBtn.onclick = handleDownload;
 </script>
+
 </body>
 </html>
