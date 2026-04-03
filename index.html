@@ -4,71 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>V-Downloader Pro</title>
+  
   <style>
     :root { --primary: #8b5cf6; --secondary: #ec4899; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: sans-serif; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', sans-serif; }
     body { margin: 0; background: var(--bg); color: var(--text); padding: 15px; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
-    .container { width: 100%; max-width: 450px; background: var(--card); border-radius: 30px; padding: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; }
-    h2 { font-size: 1.8rem; background: linear-gradient(to right, #c084fc, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
-    input { width: 100%; background: #334155; border: 2px solid transparent; border-radius: 16px; padding: 18px; color: white; font-size: 1rem; outline: none; margin-bottom: 15px; }
+    
+    .container { width: 100%; max-width: 450px; background: var(--card); border-radius: 30px; padding: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); text-align: center; }
+    h2 { font-size: 1.8rem; font-weight: 800; background: linear-gradient(to right, #c084fc, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+    p.subtitle { color: #94a3b8; font-size: 0.85rem; margin-bottom: 25px; }
+    
+    input { width: 100%; background: #334155; border: 2px solid transparent; border-radius: 16px; padding: 18px; color: white; font-size: 1rem; outline: none; margin-bottom: 15px; transition: 0.3s; }
     input:focus { border-color: var(--primary); }
-    .btn-download { width: 100%; border: none; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 1.1rem; cursor: pointer; color: white; background: linear-gradient(135deg, var(--primary), var(--secondary)); }
-    .status { margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 16px; font-size: 0.9rem; color: #cbd5e1; min-height: 60px; }
+
+    .btn-download { width: 100%; border: none; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 1.1rem; cursor: pointer; color: white; background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
+    
+    .status { margin-top: 20px; padding: 15px; background: #334155; border-radius: 16px; font-size: 0.95rem; min-height: 60px; color: #cbd5e1; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    
+    /* INTERSTITIAL OVERLAY */
     .ad-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; flex-direction:column; align-items:center; justify-content:center; }
+    .close-x { position:absolute; top:20px; right:20px; background:#444; color:white; padding:10px 15px; border-radius:50%; font-weight:bold; cursor:pointer; }
   </style>
 </head>
 <body>
 
 <div id="adOverlay" class="ad-overlay">
-    <div onclick="closeAd()" style="position:absolute; top:20px; right:20px; color:white; font-size:2rem; cursor:pointer;">×</div>
-    <h3 style="color:white">Security Check</h3>
-    <p style="color:#94a3b8; padding: 0 30px;">Verify you are human to start download.</p>
-    <button onclick="goToAd()" style="background:var(--primary); color:white; border:none; padding:15px 40px; border-radius:12px; font-weight:bold; font-size:1.2rem;">CONTINUE</button>
-</div>
-
-<div class="container">
-  <h2>V-DOWN</h2>
-  <input type="text" id="videoUrl" placeholder="Paste link (TikTok, FB, IG)...">
-  <button id="downloadBtn" class="btn-download">Download Video</button>
-  <div class="status" id="statusMsg">Ready to download.</div>
-</div>
-
-<script>
-  // 1. PASTE YOUR REAL ADSTERRA LINK HERE
-  const MY_AD_LINK = "https://www.google.com"; // Change this to your Adsterra link later
-
-  const statusMsg = document.getElementById('statusMsg');
-  const overlay = document.getElementById('adOverlay');
-
-  // Show ad when app opens
-  window.onload = () => { overlay.style.display = 'flex'; };
-
-  function closeAd() { overlay.style.display = 'none'; }
-  function goToAd() { window.open(MY_AD_LINK, '_blank'); closeAd(); }
-
-  async function handleDownload() {
-    const url = document.getElementById('videoUrl').value.trim();
-    if (!url) { statusMsg.innerText = "Please paste a link!"; return; }
-
-    statusMsg.innerText = "⏳ Fetching video... please wait.";
-
-    try {
-      // Using a more reliable Multi-Downloader API
-      const response = await fetch(`https://api.vkrdown.com/server?v=${encodeURIComponent(url)}`);
-      const data = await response.json();
-
-      if (data.data && data.data.url) {
-        statusMsg.innerHTML = `<b style="color:#10b981;">Found!</b><br><br><a href="${data.data.url[0].url}" target="_blank" style="background:#10b981; color:white; padding:10px 20px; border-radius:10px; text-decoration:none; display:inline-block; margin-top:10px;">SAVE VIDEO</a>`;
-      } else {
-        statusMsg.innerText = "❌ No video found. Make sure the account is public.";
-      }
-    } catch (e) {
-      statusMsg.innerText = "❌ Connection error. Try a different link.";
-    }
-  }
-
-  document.getElementById('downloadBtn').onclick = handleDownload;
-</script>
-
-</body>
-</html>
+    <div class="close-x" onclick="closeAd()">X</div>
+    <h3 style="color:white">Security Verification</h3>
+    <p style="color:#94a3b8; padding: 0 40px; margin-bottom: 30px;">Click Continue to
